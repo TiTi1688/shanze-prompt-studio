@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="杉泽AI提示库V2.0 — 零基础生成电影级AI漫剧提示词，30年导演经验提炼">
+<title>杉泽 AI 提示库 V2.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   DESIGN TOKENS — Apple Light + Tesla Minimal
+═══════════════════════════════════════ */
+:root{
+  --white:#ffffff;
+  --bg:#f5f5f7;
+  --bg2:#fbfbfd;
+  --surface:#ffffff;
+  --border:#d2d2d7;
+  --border-soft:#e8e8ed;
+  --text:#1d1d1f;
+  --text2:#6e6e73;
+  --text3:#aeaeb2;
+  --text-inv:#ffffff;
+  --blue:#0066cc;
+  --blue-dark:#004499;
+  --blue-bg:#f0f5ff;
+  --blue-border:#c7d9f5;
+  --green:#1a7f37;
+  --green-bg:#f0faf0;
+  --amber:#7d5000;
+  --amber-bg:#fff8e6;
+  --red:#c00;
+  --red-bg:#fff0f0;
+  --black:#000000;
+  --r-sm:8px;
+  --r:14px;
+  --r-lg:20px;
+  --r-xl:28px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.06);
+  --shadow-md:0 2px 8px rgba(0,0,0,.08),0 8px 32px rgba(0,0,0,.08);
+  --font:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --serif:'Noto Serif SC',Georgia,serif;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;min-height:100vh}
+
+/* ── NAV ── */
+.nav{position:sticky;top:0;z-index:200;height:56px;background:rgba(245,245,247,.92);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between;padding:0 40px}
+.nav-left{display:flex;align-items:center;gap:10px}
+.nav-logo{width:22px;height:22px;background:var(--black);border-radius:5px;display:flex;align-items:center;justify-content:center}
+.nav-logo svg{width:12px;height:12px;fill:var(--white)}
+.nav-name{font-size:16px;font-weight:600;letter-spacing:-.02em;color:var(--text)}
+.nav-ver{font-size:11px;font-weight:500;color:var(--blue);background:var(--blue-bg);padding:2px 8px;border-radius:20px;border:1px solid var(--blue-border);letter-spacing:.02em}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-tag{font-size:12px;color:var(--text3);letter-spacing:.01em}
+
+/* ── HERO ── */
+.hero{background:var(--bg2);border-bottom:1px solid var(--border-soft);padding:72px 40px 64px;text-align:center}
+.hero-eyebrow{font-size:12px;font-weight:500;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+.hero-title{font-family:var(--serif);font-size:clamp(40px,6vw,64px);font-weight:600;letter-spacing:-.03em;line-height:1.05;color:var(--text);margin-bottom:18px}
+.hero-title span{color:var(--blue)}
+.hero-sub{font-size:clamp(15px,2.5vw,19px);color:var(--text2);font-weight:300;max-width:560px;margin:0 auto 36px;line-height:1.5;letter-spacing:-.01em}
+.hero-platforms{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:12px}
+.pl-tag{font-size:12px;color:var(--text2);background:var(--surface);padding:6px 14px;border-radius:20px;border:1px solid var(--border);font-weight:400}
+.hero-note{font-size:12px;color:var(--text3);margin-top:8px}
+
+/* ── PROGRESS BAR ── */
+.progress-bar{background:var(--bg2);border-bottom:1px solid var(--border-soft);padding:0 40px}
+.progress-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;height:52px;gap:0}
+.p-step{display:flex;align-items:center;gap:8px;cursor:pointer;padding:0 16px 0 0;flex-shrink:0}
+.p-step:first-child{padding-left:0}
+.p-num{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--text3);transition:all .2s var(--ease);flex-shrink:0}
+.p-step.done .p-num{background:var(--blue);border-color:var(--blue);color:var(--white)}
+.p-step.active .p-num{border-color:var(--blue);color:var(--blue)}
+.p-lbl{font-size:12px;color:var(--text3);white-space:nowrap;transition:color .2s}
+.p-step.done .p-lbl,.p-step.active .p-lbl{color:var(--text2)}
+.p-line{flex:1;height:1px;background:var(--border-soft);max-width:32px}
+
+/* ── MAIN LAYOUT ── */
+.main{max-width:900px;margin:0 auto;padding:0 40px 120px}
+
+/* ── SECTION ── */
+.section{padding:52px 0 0;opacity:0;transform:translateY(16px);animation:fadeUp .5s var(--ease) forwards}
+.section:nth-child(1){animation-delay:.08s}
+.section:nth-child(2){animation-delay:.14s}
+.section:nth-child(3){animation-delay:.20s}
+.section:nth-child(4){animation-delay:.26s}
+.section:nth-child(5){animation-delay:.30s}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+.sec-head{margin-bottom:28px}
+.sec-meta{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sec-step{font-size:11px;font-weight:600;color:var(--blue);letter-spacing:.1em;text-transform:uppercase}
+.sec-divider{flex:1;height:1px;background:var(--border-soft)}
+.sec-title{font-size:24px;font-weight:500;letter-spacing:-.02em;color:var(--text);margin-bottom:6px}
+.sec-hint{font-size:14px;color:var(--text2);font-weight:300}
+
+/* ── GENRE GRID ── */
+.genre-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+.g-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:22px 8px 18px;border-radius:var(--r);border:1.5px solid var(--border-soft);background:var(--surface);cursor:pointer;transition:all .18s var(--ease);user-select:none;box-shadow:var(--shadow)}
+.g-item:hover{border-color:var(--border);box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.g-item.on{border-color:var(--blue);background:var(--blue-bg);box-shadow:0 0 0 3px rgba(0,102,204,.08)}
+.g-icon{font-size:24px;line-height:1}
+.g-name{font-size:12px;font-weight:500;color:var(--text2);text-align:center;line-height:1.3}
+.g-item.on .g-name{color:var(--blue)}
+
+/* ── VIBE GRID ── */
+.vibe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.v-item{padding:20px 20px 18px;border-radius:var(--r);border:1.5px solid var(--border-soft);background:var(--surface);cursor:pointer;transition:all .18s var(--ease);user-select:none;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.v-item::before{content:'';position:absolute;left:0;top:0;width:3px;height:0;background:var(--blue);transition:height .2s var(--ease);border-radius:0 2px 2px 0}
+.v-item:hover::before,.v-item.on::before{height:100%}
+.v-item:hover{border-color:var(--border);box-shadow:var(--shadow-md)}
+.v-item.on{border-color:var(--blue);background:var(--blue-bg)}
+.v-idx{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;margin-bottom:7px;font-family:monospace}
+.v-name{font-size:16px;font-weight:500;letter-spacing:-.01em;color:var(--text);margin-bottom:5px}
+.v-item.on .v-name{color:var(--blue)}
+.v-desc{font-size:12px;color:var(--text3);font-weight:300;line-height:1.5}
+.v-feel{font-size:11px;color:var(--text2);margin-top:8px;padding-top:8px;border-top:1px solid var(--border-soft);font-style:italic;line-height:1.4}
+
+/* ── SELECTS ── */
+.sel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:28px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field-label{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.04em;text-transform:uppercase}
+.field select{appearance:none;-webkit-appearance:none;width:100%;background:var(--surface) url("data:image/svg+xml,%3Csvg width='10' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23aeaeb2' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center;border:1.5px solid var(--border-soft);border-radius:var(--r-sm);color:var(--text);font-family:var(--font);font-size:14px;padding:12px 36px 12px 14px;cursor:pointer;outline:none;transition:all .18s var(--ease);box-shadow:var(--shadow)}
+.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,.1)}
+
+/* ── CHIPS ── */
+.chip-group{margin-bottom:24px}
+.chip-label{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px;display:block}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 16px;border-radius:20px;border:1.5px solid var(--border-soft);background:var(--surface);color:var(--text2);font-size:13px;font-family:var(--font);font-weight:400;cursor:pointer;transition:all .18s var(--ease);user-select:none;box-shadow:var(--shadow)}
+.chip:hover{border-color:var(--border);color:var(--text)}
+.chip.on{border-color:var(--blue);background:var(--blue);color:var(--white);font-weight:500;box-shadow:0 2px 8px rgba(0,102,204,.25)}
+
+/* ── FREETEXT ── */
+.ft-wrap{position:relative}
+textarea{width:100%;background:var(--surface);border:1.5px solid var(--border-soft);border-radius:var(--r);color:var(--text);font-family:var(--font);font-size:14px;padding:18px 20px;resize:none;outline:none;line-height:1.7;transition:all .18s var(--ease);box-shadow:var(--shadow)}
+textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,.1)}
+textarea::placeholder{color:var(--text3);font-weight:300}
+.ft-hint{font-size:12px;color:var(--text3);margin-top:8px;line-height:1.5}
+
+/* ── GENERATE BUTTON ── */
+.gen-section{padding:40px 0 0}
+.btn-generate{width:100%;padding:19px;border-radius:var(--r-lg);border:none;background:var(--black);color:var(--white);font-family:var(--font);font-size:17px;font-weight:500;letter-spacing:-.01em;cursor:pointer;transition:all .2s var(--ease);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.btn-generate:hover{background:#1a1a1a;transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,0,0,.2)}
+.btn-generate:active{transform:translateY(0);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.action-strip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+.btn-act{padding:13px 10px;border-radius:var(--r-sm);border:1.5px solid var(--border-soft);background:var(--surface);color:var(--text2);font-family:var(--font);font-size:13px;font-weight:400;cursor:pointer;transition:all .18s var(--ease);text-align:center;box-shadow:var(--shadow)}
+.btn-act:hover{border-color:var(--border);color:var(--text);box-shadow:var(--shadow-md)}
+.btn-act.primary{border-color:var(--blue-border);color:var(--blue);background:var(--blue-bg)}
+.btn-act.primary:hover{background:var(--blue);color:var(--white);border-color:var(--blue)}
+
+/* ── RESULT SECTION ── */
+.result-section{display:none;margin-top:52px}
+.result-rule{height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);margin-bottom:48px}
+
+/* ── RESULT CARD ── */
+.r-card{border-radius:var(--r-lg);border:1.5px solid var(--border-soft);background:var(--surface);margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow)}
+.r-head{padding:14px 22px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2)}
+.r-lbl-wrap{display:flex;align-items:center;gap:8px}
+.r-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-blue{background:var(--blue)}
+.dot-green{background:#34c759}
+.dot-red{background:#ff3b30}
+.dot-amber{background:#ff9500}
+.dot-gray{background:var(--text3)}
+.r-lbl{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.04em;text-transform:uppercase}
+.r-sub{font-size:11px;color:var(--text3);margin-left:4px;font-weight:400;text-transform:none;letter-spacing:0}
+.btn-copy-sm{font-size:12px;color:var(--blue);background:none;border:1px solid var(--blue-border);padding:5px 14px;border-radius:20px;cursor:pointer;font-family:var(--font);transition:all .15s var(--ease);font-weight:500}
+.btn-copy-sm:hover{background:var(--blue);color:var(--white);border-color:var(--blue)}
+.r-body{padding:22px;font-size:14px;line-height:1.85;color:var(--text);word-break:break-word}
+.r-body.mono{font-family:'SF Mono','Fira Code','Menlo',monospace;font-size:13px;color:#1a3a5c;background:var(--blue-bg);line-height:1.7}
+.r-body.mono-zh{font-family:var(--font);font-size:14px;color:#1a4a1a;background:var(--green-bg);line-height:1.85}
+.r-body.neg{font-family:'SF Mono','Fira Code','Menlo',monospace;font-size:12px;color:var(--red);background:var(--red-bg);line-height:1.7}
+
+/* ── BILINGUAL NOTICE ── */
+.bilingual-notice{padding:14px 22px;background:var(--amber-bg);border-bottom:1px solid #ffe4a0;display:flex;align-items:flex-start;gap:10px}
+.bn-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.bn-text{font-size:12px;color:var(--amber);line-height:1.6}
+.bn-text strong{font-weight:600}
+
+/* ── ZH BREAKDOWN ── */
+.zh-row{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border-soft);align-items:flex-start}
+.zh-row:last-child{border-bottom:none;padding-bottom:0}
+.zh-key{font-size:11px;font-weight:600;color:var(--blue);letter-spacing:.04em;min-width:56px;flex-shrink:0;padding-top:2px;text-transform:uppercase}
+.zh-val{font-size:13px;color:var(--text2);font-weight:300;line-height:1.55}
+
+/* ── TAGS ── */
+.r-tags{display:flex;flex-wrap:wrap;gap:6px;padding:14px 22px;border-top:1px solid var(--border-soft);background:var(--bg2)}
+.rtag{font-size:11px;padding:4px 11px;border-radius:20px;font-weight:500;letter-spacing:.02em}
+.rt-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+.rt-gray{background:var(--bg);color:var(--text2);border:1px solid var(--border-soft)}
+.rt-green{background:var(--green-bg);color:var(--green);border:1px solid #c3e6cb}
+
+/* ── DIRECTOR NOTE ── */
+.note-body{padding:22px;font-size:14px;color:var(--text2);line-height:1.85;font-weight:300}
+.note-tip{display:flex;gap:12px;padding:14px 16px;background:var(--amber-bg);border-radius:var(--r-sm);margin-top:14px;border:1px solid #ffe4a0}
+.tip-icon{font-size:16px;flex-shrink:0}
+.tip-text{font-size:12px;color:var(--amber);line-height:1.6}
+.tip-text strong{font-weight:600;display:block;margin-bottom:3px}
+
+/* ── SHARE BLOCK ── */
+.share-block{margin-top:20px;padding:28px;border-radius:var(--r-xl);background:var(--text);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.share-left h3{font-size:18px;font-weight:500;color:var(--white);letter-spacing:-.02em;margin-bottom:5px}
+.share-left p{font-size:13px;color:rgba(255,255,255,.55);font-weight:300}
+.share-url-text{font-size:12px;color:rgba(255,255,255,.35);font-family:monospace;margin-top:8px;word-break:break-all}
+.share-btns{display:flex;gap:10px;flex-wrap:wrap;flex-shrink:0}
+.btn-share-w{padding:12px 24px;border-radius:20px;background:var(--white);color:var(--black);font-family:var(--font);font-size:14px;font-weight:500;border:none;cursor:pointer;transition:all .18s var(--ease)}
+.btn-share-w:hover{background:rgba(255,255,255,.9);transform:translateY(-1px)}
+.btn-share-o{padding:12px 20px;border-radius:20px;background:transparent;color:rgba(255,255,255,.7);font-family:var(--font);font-size:14px;border:1.5px solid rgba(255,255,255,.2);cursor:pointer;transition:all .18s var(--ease)}
+.btn-share-o:hover{border-color:rgba(255,255,255,.5);color:var(--white)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--text);color:var(--white);font-size:13px;font-weight:400;padding:12px 26px;border-radius:24px;opacity:0;pointer-events:none;transition:all .3s var(--ease);z-index:9999;white-space:nowrap;letter-spacing:-.01em;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border-soft);padding:36px 40px;text-align:center;background:var(--bg2)}
+.footer-brand{font-family:var(--serif);font-size:18px;color:var(--text);margin-bottom:6px;letter-spacing:-.01em}
+.footer-meta{font-size:12px;color:var(--text3);font-weight:300}
+
+/* ── RESPONSIVE ── */
+@media(max-width:680px){
+  .nav{padding:0 20px}
+  .nav-tag{display:none}
+  .hero{padding:48px 20px 44px}
+  .progress-bar{padding:0 20px}
+  .main{padding:0 20px 80px}
+  .genre-grid{grid-template-columns:repeat(4,1fr);gap:8px}
+  .g-item{padding:16px 4px 14px}
+  .g-icon{font-size:20px}
+  .g-name{font-size:11px}
+  .vibe-grid{grid-template-columns:1fr 1fr}
+  .sel-grid{grid-template-columns:1fr 1fr}
+  .action-strip{grid-template-columns:1fr 1fr}
+  .action-strip .btn-act:last-child{grid-column:span 2}
+  .share-block{flex-direction:column;align-items:flex-start;padding:22px}
+  .p-lbl{display:none}
+}
+@media(max-width:400px){
+  .genre-grid{grid-template-columns:repeat(3,1fr)}
+  .vibe-grid{grid-template-columns:1fr}
+  .sel-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-left">
+    <div class="nav-logo">
+      <svg viewBox="0 0 12 12"><path d="M2 2h3v3H2zM7 2h3v3H7zM2 7h3v3H2zM7 7l1.5 3L11 7z"/></svg>
+    </div>
+    <span class="nav-name">杉泽 AI 提示库</span>
+    <span class="nav-ver">V 2.0</span>
+  </div>
+  <div class="nav-right">
+    <span class="nav-tag">Film · Manga · Anime</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">30 年导演经验提炼 · 零基础即可使用</div>
+  <h1 class="hero-title">说出你的感觉<br><span>AI 帮你翻译成大片</span></h1>
+  <p class="hero-sub">专为 AI 漫剧创作设计的专业提示词工具<br>不懂英文 · 不懂技术 · 选感觉就能出电影级画面</p>
+  <div class="hero-platforms">
+    <span class="pl-tag">Midjourney</span>
+    <span class="pl-tag">Stable Diffusion</span>
+    <span class="pl-tag">Runway</span>
+    <span class="pl-tag">Sora</span>
+    <span class="pl-tag">ComfyUI</span>
+    <span class="pl-tag">NovelAI</span>
+    <span class="pl-tag">即梦 AI</span>
+    <span class="pl-tag">可灵</span>
+  </div>
+  <div class="hero-note">💡 提示词优先使用中文，专业影视术语保留英文并附说明</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-bar">
+  <div class="progress-inner" id="progress">
+    <div class="p-step active" id="ps1"><div class="p-num">1</div><span class="p-lbl">类型</span></div>
+    <div class="p-line"></div>
+    <div class="p-step" id="ps2"><div class="p-num">2</div><span class="p-lbl">感觉</span></div>
+    <div class="p-line"></div>
+    <div class="p-step" id="ps3"><div class="p-num">3</div><span class="p-lbl">细节</span></div>
+    <div class="p-line"></div>
+    <div class="p-step" id="ps4"><div class="p-num">4</div><span class="p-lbl">描述</span></div>
+    <div class="p-line"></div>
+    <div class="p-step" id="ps5"><div class="p-num">5</div><span class="p-lbl">生成</span></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- S1 TYPE -->
+  <div class="section" id="s1">
+    <div class="sec-head">
+      <div class="sec-meta"><span class="sec-step">Step 01</span><div class="sec-divider"></div></div>
+      <h2 class="sec-title">你在创作什么类型的内容？</h2>
+      <p class="sec-hint">选择最接近你作品的类型，系统会自动匹配对应画风语言</p>
+    </div>
+    <div class="genre-grid" id="genre-grid"></div>
+  </div>
+
+  <!-- S2 VIBE -->
+  <div class="section" id="s2">
+    <div class="sec-head">
+      <div class="sec-meta"><span class="sec-step">Step 02</span><div class="sec-divider"></div></div>
+      <h2 class="sec-title">这个画面给你什么感觉？</h2>
+      <p class="sec-hint">不用想太多，用直觉选 — 朦胧的感觉就是最准确的答案</p>
+    </div>
+    <div class="vibe-grid" id="vibe-grid"></div>
+  </div>
+
+  <!-- S3 DETAIL -->
+  <div class="section" id="s3">
+    <div class="sec-head">
+      <div class="sec-meta"><span class="sec-step">Step 03</span><div class="sec-divider"></div></div>
+      <h2 class="sec-title">场景细节设定</h2>
+      <p class="sec-hint">全部选填，选得越多提示词越精准</p>
+    </div>
+    <div class="sel-grid">
+      <div class="field"><span class="field-label">主角性别</span>
+        <select id="sg">
+          <option value="">不限</option><option value="m">男性主角</option><option value="f">女性主角</option>
+          <option value="mf">男女双人</option><option value="g">群像多人</option><option value="n">无人物·纯场景</option>
+        </select>
+      </div>
+      <div class="field"><span class="field-label">角色气质</span>
+        <select id="sc">
+          <option value="">不限</option><option value="cold">冷酷禁欲系</option><option value="warm">温柔治愈系</option>
+          <option value="hot">热血少年</option><option value="dark">神秘腹黑</option><option value="power">霸道强势</option>
+          <option value="pure">清纯可爱</option><option value="sage">仙风道骨</option><option value="street">叛逆街头</option>
+          <option value="noble">高贵冷艳</option>
+        </select>
+      </div>
+      <div class="field"><span class="field-label">故事场景</span>
+        <select id="se">
+          <option value="">不限</option><option value="city">现代都市夜景</option><option value="school">校园青春</option>
+          <option value="ancient">古代宫廷</option><option value="forest">神秘森林</option><option value="sea">深海水下</option>
+          <option value="space">宇宙太空</option><option value="apoc">末日废土</option><option value="sky">云端天空</option>
+          <option value="bar">地下酒吧</option><option value="mountain">仙山云海</option><option value="war">战场废墟</option>
+          <option value="dream">梦境虚空</option>
+        </select>
+      </div>
+      <div class="field"><span class="field-label">时间天气</span>
+        <select id="st">
+          <option value="">不限</option><option value="night">深夜</option><option value="dawn">黎明破晓</option>
+          <option value="sunset">黄昏日落</option><option value="rain">雨天</option><option value="snow">暴雪</option>
+          <option value="sunny">晴天阳光</option><option value="storm">雷暴闪电</option><option value="fog">浓雾弥漫</option>
+          <option value="sakura">樱花季</option>
+        </select>
+      </div>
+    </div>
+    <div class="chip-group">
+      <span class="chip-label">镜头语言（摄影机怎么拍）</span>
+      <div class="chip-row" id="cam-chips"></div>
+    </div>
+    <div class="chip-group">
+      <span class="chip-label">画面色调（整体颜色氛围）</span>
+      <div class="chip-row" id="col-chips"></div>
+    </div>
+    <div class="chip-group">
+      <span class="chip-label">画面比例</span>
+      <div class="chip-row" id="ratio-chips"></div>
+    </div>
+  </div>
+
+  <!-- S4 FREE -->
+  <div class="section" id="s4">
+    <div class="sec-head">
+      <div class="sec-meta"><span class="sec-step">Step 04</span><div class="sec-divider"></div></div>
+      <h2 class="sec-title">用你自己的话描述这个画面</h2>
+      <p class="sec-hint">随便说，越自然越好 — AI 会把你的感觉翻译成专业语言</p>
+    </div>
+    <div class="ft-wrap">
+      <textarea id="freetext" rows="4" placeholder="例如：两个人在暴雨中的天台相遇，一个穿着白色制服，一个浑身是血，眼神里有种说不清楚的绝望和温柔，感觉很压抑但又有点心疼…"></textarea>
+      <p class="ft-hint">💬 不知道怎么写？直接用说话的语气描述你脑海中的画面就好，哪怕只有一句话也有用。</p>
+    </div>
+  </div>
+
+  <!-- S5 GENERATE -->
+  <div class="section gen-section" id="s5">
+    <button class="btn-generate" onclick="generate()">✦ 生成专业提示词</button>
+    <div class="action-strip">
+      <button class="btn-act primary" onclick="copyZH()" id="btn-cpzh">复制中文提示词</button>
+      <button class="btn-act primary" onclick="copyEN()" id="btn-cpen">复制英文提示词</button>
+      <button class="btn-act" onclick="exportTxt()">导出完整 .txt</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result-section" id="result-sec">
+    <div class="result-rule"></div>
+
+    <!-- ZH PROMPT -->
+    <div class="r-card">
+      <div class="r-head">
+        <div class="r-lbl-wrap"><div class="r-dot dot-green"></div><span class="r-lbl">中文提示词<span class="r-sub">· 直接输入 AI 工具，大部分平台支持</span></span></div>
+        <button class="btn-copy-sm" onclick="copyZH()">复制</button>
+      </div>
+      <div class="r-body mono-zh" id="zh-prompt-out"></div>
+      <div class="r-tags" id="tags-out"></div>
+    </div>
+
+    <!-- EN PROMPT -->
+    <div class="r-card">
+      <div class="r-head">
+        <div class="r-lbl-wrap"><div class="r-dot dot-blue"></div><span class="r-lbl">英文提示词<span class="r-sub">· Positive Prompt · 精准度更高</span></span></div>
+        <button class="btn-copy-sm" onclick="copyEN()">复制</button>
+      </div>
+      <div class="bilingual-notice">
+        <span class="bn-icon">💡</span>
+        <div class="bn-text"><strong>建议复制英文提示词</strong>大多数 AI 工具对英文指令识别更精准，生成效果更接近电影质感。中文提示词供你理解内容，英文提示词用来实际生成画面。</div>
+      </div>
+      <div class="r-body mono" id="en-prompt-out"></div>
+    </div>
+
+    <!-- BREAKDOWN -->
+    <div class="r-card">
+      <div class="r-head">
+        <div class="r-lbl-wrap"><div class="r-dot dot-gray"></div><span class="r-lbl">参数解析<span class="r-sub">· 每一段提示词的含义</span></span></div>
+      </div>
+      <div class="r-body" id="breakdown-out"></div>
+    </div>
+
+    <!-- NEG PROMPT -->
+    <div class="r-card">
+      <div class="r-head">
+        <div class="r-lbl-wrap"><div class="r-dot dot-red"></div><span class="r-lbl">负向提示词<span class="r-sub">· Negative Prompt · 告诉 AI 不要画什么</span></span></div>
+        <button class="btn-copy-sm" onclick="copyNeg()">复制</button>
+      </div>
+      <div class="r-body neg" id="neg-out"></div>
+    </div>
+
+    <!-- DIRECTOR NOTE -->
+    <div class="r-card">
+      <div class="r-head">
+        <div class="r-lbl-wrap"><div class="r-dot dot-amber"></div><span class="r-lbl">导演笔记<span class="r-sub">· 30年经验的构图打光建议</span></span></div>
+      </div>
+      <div class="note-body" id="note-out"></div>
+    </div>
+
+    <!-- SHARE -->
+    <div class="share-block">
+      <div class="share-left">
+        <h3>把这个工具分享给朋友</h3>
+        <p>让更多创作者用 AI 做出电影质感的大片</p>
+        <div class="share-url-text" id="share-url-txt">https://TiTi1688.github.io/shanze-prompt-studio</div>
+      </div>
+      <div class="share-btns">
+        <button class="btn-share-w" onclick="copyLink()">复制链接</button>
+        <button class="btn-share-o" onclick="copyShareMsg()">复制分享语</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-brand">杉泽 AI 提示库</div>
+  <div class="footer-meta">Shanze Prompt Studio · V 2.0 · MIT License · 30 年导演经验提炼</div>
+</footer>
+
+<script>
+/* ═══════ CONSTANTS ═══════ */
+const SHARE = 'https://TiTi1688.github.io/shanze-prompt-studio';
+
+/* ═══════ DATA ═══════ */
+const GENRES = [
+  {id:'action',  ico:'⚡',zh:'热血动漫',
+   en_art:'dynamic shounen manga style, bold ink lines, kinetic energy lines, power aura effects',
+   zh_art:'热血少年漫画风格，粗犷有力的墨线，动感速度线，能量光环特效',
+   en_col:'high contrast orange-teal palette, blazing vivid saturation, dramatic highlights',
+   zh_col:'高对比橙青撞色，热烈饱和度，戏剧性高光'},
+  {id:'romance', ico:'🌸',zh:'爱情漫画',
+   en_art:'soft romance webtoon illustration, delicate linework, sparkle effects, drifting flower petals',
+   zh_art:'柔美恋爱漫画风格，细腻精致的线条，闪光粒子，飘落的花瓣',
+   en_col:'warm peach and rose-gold palette, dreamy shallow bokeh, warm golden backlight',
+   zh_col:'暖桃色与玫瑰金色调，梦幻虚化光晕，温暖逆光'},
+  {id:'suspense',ico:'🌫',zh:'悬疑惊悚',
+   en_art:'noir thriller manga, deep chiaroscuro shadows, cross-hatching ink texture, oppressive atmosphere',
+   zh_art:'黑色电影惊悚漫画风，强烈明暗对比，交叉影线笔触，压迫性氛围',
+   en_col:'desaturated cold tones, teal-grey shadows, extreme high contrast monochrome',
+   zh_col:'去饱和冷色调，蓝灰色阴影，极端黑白对比'},
+  {id:'fantasy', ico:'✨',zh:'奇幻史诗',
+   en_art:'epic fantasy concept art, intricate world-building details, magical luminous particle effects, god-ray shafts',
+   zh_art:'史诗奇幻概念艺术，精细的世界观构建细节，魔法发光粒子特效，神光光束',
+   en_col:'deep jewel tones, mystical volumetric god-rays, atmospheric rim lighting',
+   zh_col:'深邃宝石色系，神秘体积光，大气轮廓光'},
+  {id:'scifi',   ico:'🔮',zh:'科幻赛博',
+   en_art:'cyberpunk manga aesthetic, holographic HUD overlays, neon circuit-board details, tech implant designs',
+   zh_art:'赛博朋克漫画美学，全息HUD界面叠加，霓虹电路板细节，义体改造设计',
+   en_col:'neon blue-violet palette, glowing magenta-cyan accents, volumetric neon light fog',
+   zh_col:'霓虹蓝紫色调，洋红与青色发光，体积感霓虹光雾'},
+  {id:'horror',  ico:'🌑',zh:'恐怖黑暗',
+   en_art:'dark horror illustration, grotesque unsettling anatomy, ink bleed and drip textures, dread atmosphere',
+   zh_art:'暗黑恐怖插画风格，怪诞扭曲的造型，墨水晕染滴落质感，令人不安的氛围',
+   en_col:'deep crimson and black palette, sickly green ambient glow, single harsh rim light',
+   zh_col:'深红与纯黑色调，病态绿色环境光，单一强硬轮廓光'},
+  {id:'slice',   ico:'☀',zh:'日常治愈',
+   en_art:'warm slice-of-life anime style, clean cheerful linework, gentle soft glow, cozy detail-rich scenes',
+   zh_art:'温馨日常动漫风格，清晰明快的线条，柔和温暖的光晕，充满细节的惬意场景',
+   en_col:'warm soft pastel palette, golden afternoon window light, gentle diffused bokeh',
+   zh_col:'柔暖马卡龙色调，午后金色窗光，轻柔漫射虚化'},
+  {id:'wuxia',   ico:'🏯',zh:'古装武侠',
+   en_art:'Chinese wuxia historical illustration, flowing silk robes in motion, ink wash painting influence, martial qi energy',
+   zh_art:'中国武侠历史插画风格，飘逸飞舞的绸缎衣袂，水墨画意境，武学真气光效',
+   en_col:'muted earth tones, crimson and gold accents, ink-wash atmospheric haze',
+   zh_col:'沉稳大地色系，绛红金色点缀，水墨氤氲意境'},
+  {id:'idol',    ico:'💫',zh:'都市偶像',
+   en_art:'glossy urban webtoon style, fashion-forward styling, magazine editorial finish, glamour lighting',
+   zh_art:'时尚光鲜都市漫画风格，前卫潮流造型，杂志大片质感，魅力棚拍打光',
+   en_col:'warm golden studio lighting, champagne and rose tones, elegant lens flare',
+   zh_col:'温暖金色棚拍光，香槟玫瑰色调，优雅镜头光晕'},
+  {id:'mecha',   ico:'⚙',zh:'机甲战争',
+   en_art:'detailed mecha battle scene illustration, battle-scarred mechanical design, shrapnel explosion debris, sparks',
+   zh_art:'精细机甲战斗场景插画，战损机械设计，弹片爆炸碎屑飞散，金属火花四溅',
+   en_col:'industrial steel-grey and amber-orange, intense heat-glow, high contrast industrial',
+   zh_col:'工业钢铁灰与琥珀橙，强烈热焰光效，高对比工业质感'},
+  {id:'xianxia', ico:'🌙',zh:'仙侠玄幻',
+   en_art:'ethereal xianxia cultivation art, flowing immortal robes with wind effect, spirit energy wisps and aura',
+   zh_art:'空灵仙侠修仙艺术风格，随风飘动的仙袂，灵气漩涡与气场光效',
+   en_col:'cold azure-white spirit palette, luminous spirit-fire glow, layers of misty depth',
+   zh_col:'冷调青白灵气色，发光灵火效果，云雾深度层次'},
+];
+
+const VIBES = [
+  {id:'epic',       zh:'史诗壮阔', desc:'山河破碎，苍穹震动',   feel:'好像站在世界的边缘，渺小而震撼',
+   en:'epic cinematic grandeur, sweeping monumental scale, heroic dramatic sky, god-ray shafts of light',
+   zh_p:'史诗级电影气势，宏大壮阔的规模感，英雄主义戏剧性天空，穿云神光束'},
+  {id:'lonely',     zh:'忧郁孤独', desc:'一个人，很安静，很远',  feel:'周围很多人，但感觉只有自己',
+   en:'melancholic solitude, muted desaturated palette, soft rain atmosphere, lonely figure in vast empty space',
+   zh_p:'忧郁孤独情绪，去饱和冷淡色调，柔和雨中氛围，空旷空间中的孤独身影'},
+  {id:'tension',    zh:'窒息紧张', desc:'喘不过气，心跳停了一下', feel:'看恐怖片捂眼睛那种',
+   en:'suffocating tension, claustrophobic tight framing, harsh chiaroscuro shadows, dutch angle composition, cold sweat',
+   zh_p:'窒息紧绷感，逼仄压迫的紧凑构图，强烈明暗阴影，荷兰角（倾斜）构图，冷汗'},
+  {id:'romantic',   zh:'浪漫唯美', desc:'心跳加速，说不出话',    feel:'初恋的感觉，粉粉的',
+   en:'dreamy romantic aesthetic, golden hour warm glow, gossamer bokeh, drifting flower petals, tender atmosphere',
+   zh_p:'梦幻浪漫美学，黄金时刻暖光，丝绒感虚化，飘落花瓣，温柔细腻的氛围'},
+  {id:'dark',       zh:'黑暗压抑', desc:'深渊在凝视，命运很重',  feel:'深夜一个人看的那种',
+   en:'dark oppressive noir weight, low-key single-source lighting, 70% deep shadow, existential dread',
+   zh_p:'黑暗压抑的黑色电影质感，低调单光源打光，七成画面沉入深影，存在主义的沉重感'},
+  {id:'explosive',  zh:'燃爆热血', desc:'沸腾了，要冲出屏幕',    feel:'看热血动漫想站起来那种',
+   en:'explosive kinetic energy burst, radiating speed lines, blazing fire power aura, maximum impact composition',
+   zh_p:'爆炸性动感能量爆发，向外辐射的速度线，燃烧火焰力量光环，最强冲击力构图'},
+  {id:'mysterious', zh:'神秘悬念', desc:'有什么隐藏在雾里',      feel:'转角看见一个人影',
+   en:'enigmatic fog-shrouded mystery, silhouetted backlit figures, hidden cryptic symbols, eerie stillness',
+   zh_p:'谜雾笼罩的神秘感，逆光剪影轮廓，隐藏的神秘符号，令人不安的静谧'},
+  {id:'warm',       zh:'温暖治愈', desc:'被人抱着的感觉',        feel:'妈妈做的饭，下午的阳光',
+   en:'warm healing comfort light, cozy safe intimate space, gentle golden dust motes, tender soft smiles',
+   zh_p:'温暖治愈的抚慰光，惬意安全的私密空间，金色柔和尘埃光粒，温柔的浅浅微笑'},
+  {id:'despair',    zh:'绝望崩溃', desc:'一切都碎了，没有声音',   feel:'哭不出来，只是麻了',
+   en:'devastating silent despair, crumbling fractured world, ashen completely desaturated palette, still void',
+   zh_p:'令人心碎的无声绝望，崩裂破碎的世界，灰烬般完全去饱和色调，空洞的静止感'},
+  {id:'revenge',    zh:'复仇冷酷', desc:'冷静，致命，蓄势待发',  feel:'雨中背影，下一秒就爆发',
+   en:'cold calculated lethal composure, perfect symmetric composition, predatory stillness, inevitable doom aura',
+   zh_p:'冷静算计的致命沉着，完美对称构图，掠食者般的静止感，命运注定的末日气场'},
+  {id:'bittersweet',zh:'悲喜交织', desc:'笑着哭，哭着笑',        feel:'毕业典礼，分手之后',
+   en:'bittersweet emotional depth, warm light with cold shadow contrast, nostalgic memory haze, poignant beauty',
+   zh_p:'悲喜交织的情感深度，暖光与冷影的对比，怀旧记忆的朦胧感，令人揪心的美'},
+  {id:'cool',       zh:'帅气潇洒', desc:'太帅了，移不开眼',       feel:'慢动作回头那一瞬间',
+   en:'effortlessly cool swagger, slow-motion hero reveal lighting, sharp cinematic profile, magnetic presence',
+   zh_p:'毫不费力的潇洒气场，慢镜头英雄登场打光，锐利电影感侧脸轮廓，摄人心魄的存在感'},
+];
+
+const CAMERAS = [
+  {zh:'超广角全景',  en:'ultra-wide 16mm cinematic establishing shot, 21:9 aspect ratio',   tip:'适合展示宏大场景'},
+  {zh:'电影人物特写',en:'extreme close-up 85mm portrait lens, razor-thin depth of field, cinematic bokeh', tip:'适合表现情绪'},
+  {zh:'低角度仰拍',  en:'dramatic low-angle upward shot, imposing heroic scale',             tip:'让角色显得强大'},
+  {zh:'俯瞰鸟瞰',   en:"aerial bird's eye view, overhead drone perspective, city grid below",tip:'适合展现环境规模'},
+  {zh:'跟拍追逐',   en:'handheld kinetic tracking shot, gritty immersive documentary feel',  tip:'带入感极强'},
+  {zh:'慢镜定格',   en:'cinematic slow-motion freeze frame, motion blur trails, suspended moment',tip:'戏剧性瞬间'},
+  {zh:'过肩镜头',   en:'intimate over-the-shoulder framing, foreground-background depth',    tip:'对话场景必备'},
+  {zh:'360度环绕',  en:'360-degree orbital hero reveal shot, circular sweep camera move',    tip:'英雄登场最常用'},
+];
+
+const COLORS = [
+  {zh:'霓虹蓝紫',en:'neon blue-violet palette, glowing magenta and cyan accents, volumetric neon light'},
+  {zh:'橙蓝好莱坞',en:'Hollywood orange-teal color grade, warm highlights with cool shadows'},
+  {zh:'黑白胶片',en:'black and white film noir, extreme contrast, 35mm film grain texture'},
+  {zh:'血红暗调',en:'dystopian blood-red and black grade, crimson ambient glow'},
+  {zh:'金棕暖调',en:'golden sepia warm grade, aged cinematic film warmth, nostalgic glow'},
+  {zh:'冷蓝清冽',en:'icy cold blue-white palette, desolate winter clarity, minimalist crispness'},
+  {zh:'暖橙夕阳',en:'golden hour amber warmth, long sunset silhouettes, atmospheric dust haze'},
+  {zh:'莫兰迪',en:'muted Morandi color palette, sophisticated desaturated tones, artistic restraint'},
+];
+
+const RATIOS = [
+  {zh:'16:9 横屏',  en:'--ar 16:9',   tip:'标准屏幕'},
+  {zh:'9:16 竖屏',  en:'--ar 9:16',   tip:'手机短视频'},
+  {zh:'2.35:1 宽幕',en:'--ar 47:20',  tip:'电影院感觉'},
+  {zh:'1:1 方图',   en:'--ar 1:1',    tip:'社交媒体'},
+  {zh:'4:3 复古',   en:'--ar 4:3',    tip:'复古TV感'},
+];
+
+const CHAR_ZH = {
+  cold:'冷峻表情，轮廓分明，目光疏离锐利，举止沉静致命',
+  warm:'温柔眼神，嘴角浅笑，亲切治愈的气场，让人放松',
+  hot:'炙热坚定的眼神，凌乱飘扬的头发，充满爆发力的姿态，燃烧的斗志',
+  dark:'神秘的半边微笑，半张脸沉入阴影，冷静算计的眼神，深不可测',
+  power:'强势压迫的气场，锐利权威的眼神，宽肩挺立，无惧任何',
+  pure:'清澈无辜的大眼睛，精致柔和的面容，天真纯洁的表情，青春气息',
+  sage:'超凡出尘的面容，白色仙袂飘飘，空灵脱俗，古老的深邃智慧',
+  street:'叛逆的街头气息，层叠的潮流穿搭，痞气的自信笑容，城市野生感',
+  noble:'高贵冷艳，不可侵犯的气场，精致奢华，俯视众生的从容',
+};
+const CHAR_EN = {
+  cold:'stoic cold expression, sharp chiseled features, distant piercing gaze, composed lethal composure',
+  warm:'gentle warm smile, soft kind eyes, approachable healing presence, naturally calming',
+  hot:'fierce burning determined eyes, wild wind-swept hair, explosive dynamic pose, blazing fighting spirit',
+  dark:'enigmatic half-smile, face half-submerged in shadow, calculating cold gaze, hidden dangerous depth',
+  power:'commanding dominant presence, razor-sharp authoritative gaze, broad powerful stance, fearless aura',
+  pure:'innocent wide clear eyes, delicate soft features, guileless pure expression, youthful fresh charm',
+  sage:'otherworldly serene face, flowing white robes, ethereal transcendent bearing, ancient boundless wisdom',
+  street:'rebellious street-edge attitude, layered avant-garde streetwear, cocky charismatic smirk, urban raw energy',
+  noble:'aristocratic cold elegance, untouchable commanding aura, refined opulent bearing, above-all composure',
+};
+const GENDER_ZH = {m:'男性主角，英俊少年，',f:'女性主角，美丽少女，',mf:'男女双主角，两人对视，',g:'群像多人构图，',n:''};
+const GENDER_EN = {m:'male protagonist, handsome young man,',f:'female protagonist, beautiful young woman,',mf:'two lead characters, male and female, facing each other,',g:'ensemble cast, multiple characters,',n:''};
+const ENV_ZH = {city:'雨夜霓虹都市，高耸摩天大楼，灯光倒映湿润地面，',school:'樱花飘落校园，午后教室暖光，青春气息，',ancient:'气势恢宏的古代宫廷，雕梁画栋，',forest:'远古神秘森林，盘根错节的参天大树，荧光生物，',sea:'深海无尽黑暗，生物荧光水母漂浮，压迫感，',space:'浩瀚深邃宇宙，星云背景，轨道空间站，',apoc:'末日废土遗迹，倒塌建筑，灰烬色天空，',sky:'云层之上，绚烂日落天际，无边无际的天空，',bar:'地下霓虹酒吧，烟雾弥漫，鱼龙混杂，',mountain:'仙山绝顶，滚滚云海，苍劲古松，',war:'战场废墟，炮火硝烟，断壁残垣，',dream:'超现实梦境空间，虚空漂浮，扭曲的物理法则，'};
+const ENV_EN = {city:'rain-soaked neon megacity, towering skyscrapers, reflective wet streets,',school:'cherry blossom campus, warm afternoon classroom light, youthful energy,',ancient:'grand ancient imperial palace, ornate carved beams and painted pillars,',forest:'ancient mystical primeval forest, vast gnarled trees, bioluminescent organisms,',sea:'deep underwater abyss, bioluminescent jellyfish drifting, crushing pressure darkness,',space:'vast deep space void, swirling nebula backdrop, orbital space station,',apoc:'post-apocalyptic ruins, collapsed buildings, ash-grey desolate sky,',sky:'above the cloud layer, brilliant sunset on the horizon, boundless open sky,',bar:'underground neon bar, smoky hazy atmosphere, shady mixed clientele,',mountain:'immortal mountain summit, rolling sea of clouds, ancient gnarled pines,',war:'battlefield ruins, artillery smoke, broken walls and rubble,',dream:'surreal dreamscape void, floating suspended elements, warped physics,'};
+const TIME_ZH = {night:'深夜，无月无星，一片漆黑，',dawn:'黎明破晓，第一缕曙光划破地平线，',sunset:'炽烈金色黄昏，拉长的长影，',rain:'大雨倾盆，水珠打湿的反光地面，',snow:'暴风雪肆虐，冰封的世界，可见的呼吸白雾，',sunny:'灿烂金色阳光，正午锐利的阴影，',storm:'狂暴雷暴，劈下的闪电，翻腾的乌云，',fog:'浓雾弥漫，能见度极低，人影若隐若现，',sakura:'樱花盛放季节，粉色花瓣随风飘落，'};
+const TIME_EN = {night:'deep midnight, moonless starless pitch dark sky,',dawn:'breaking dawn, first shaft of light cutting across the horizon,',sunset:'blazing golden dusk, dramatically elongated long shadows,',rain:'heavy downpour, rain-soaked reflective wet surfaces,',snow:'raging blizzard, ice-frozen world, visible breath mist,',sunny:'brilliant golden sunlight, sharp crisp noon-hour shadows,',storm:'violent thunderstorm, lightning striking down, churning storm clouds,',fog:'thick impenetrable fog, near-zero visibility, figures ghosting through,',sakura:'cherry blossom season in full bloom, pink petals drifting on the wind,'};
+const DIRECTOR_NOTES = {
+  epic:'【史诗感构图法】核心在"规模对比"——让主角显得渺小，让世界显得巨大。建议加上 --ar 47:20 超宽幕比例，模拟电影院银幕感。光线从画面右上方 45° 打入，制造"神光"穿云效果。天空的处理往往决定画面是否史诗，大量的体积云和丁达尔光效是关键。',
+  lonely:'【孤独感留白法】孤独感靠"空间"说话，不靠人物。让主角只占画面的 1/5，其余 4/5 是虚空。冷色调（蓝灰、青白）配合轻微的散射雾气，能最大化孤独感。避免任何暖色光——暖色代表陪伴，冷色代表孤独。',
+  tension:'【紧张感构图法】压迫感来自"失衡"。荷兰角（Dutck Angle）将画面倾斜 8-15°，让观众本能感到不安。强烈的明暗对比（明度差超过 80%），前景设置遮挡物制造窥视感。记住：越密闭越紧张，越不对称越不安。',
+  romantic:'【浪漫感打光法】浪漫感靠"柔化一切"。逆光让发丝透亮发光，大光圈（f/1.4 效果）虚化背景。金黄色系是浪漫的最佳语言，花瓣和光粒是必备道具。画面中留出"呼吸感"——不要填满每个角落，留白是浪漫的一部分。',
+  dark:'【黑暗感打光法】只保留一个光源（单光源），让 70% 的画面沉入完全的黑暗中。这是犯罪片、悬疑片最核心的视觉语言——让观众的眼睛在黑暗中"搜索"信息。黑色要"深"而有质感，不是死黑，而是有层次的暗。',
+  explosive:'【热血感动线法】热血感需要"方向性"。速度线和爆炸碎片统一向外辐射，给构图强烈的离心力。主角的视线方向要与画面运动方向一致，创造"即将冲出画面"的张力。橙红色是能量爆发的最佳颜色——太阳、火焰、鲜血都是这个色系。',
+  mysterious:'【神秘感留白法】神秘感靠"信息缺失"。不要完整展示主体，只露 30% 就够了。逆光剪影、浓雾遮挡、局部特写——让观众自己脑补的部分，永远比你画出来的更恐怖、更神秘。"看不见"比"看见了"更有力量。',
+  warm:'【治愈感空间法】治愈感靠"安全空间"的建立。柔和的漫射光（散射光，非直射），暖黄色调（2700K 色温感），细节道具（咖啡杯、书本、毛毯、猫）能快速建立情感联结。构图要"包裹"主角——用前景元素将人物环绕，制造被保护的感觉。',
+  despair:'【绝望感色彩法】绝望感靠"色彩剥离"。完全去饱和度（接近黑白但不完全黑白），灰白色调，空间压迫（低天花板或逼仄环境）。人物姿态要"蜷缩"或"塌陷"——竖直的人代表希望，水平或蜷缩的人代表放弃。',
+  revenge:'【复仇感节奏法】复仇感靠"极度控制"的沉默。完美对称构图传达秩序感——被压制的愤怒比爆发中的愤怒更有力量。人物表情要克制到近乎面具，眼神是唯一允许"说话"的地方。冷蓝色基调配合极简背景——越空旷，越致命。',
+  bittersweet:'【悲喜交织法】同一画面中同时存在暖光和冷光——暖光（黄橙）代表过去的美好，冷光（蓝紫）代表现实的残酷。人物表情要"复合"——嘴角微扬但眼角带泪。焦距稍微虚化（轻微 motion blur）制造"记忆感"，好像在回忆一段不存在的时光。',
+  cool:'【帅气登场法】"帅"来自慢动作和剪影的组合。从背后打强光，制造轮廓光（rim light），让人物的边缘发亮。构图留出大量负空间，主角占画面 1/3 即可——越克制，越帅气。侧脸或 3/4 侧脸比正脸更有电影感。',
+};
+const NEG = 'lowres, bad anatomy, bad hands, missing fingers, extra fingers, fused fingers, mutated hands, blurry, jpeg artifacts, watermark, signature, text, logo, username, ugly, deformed, poorly drawn face, poorly drawn hands, poorly drawn body, bad proportions, long neck, amateur, low quality, grainy, overexposed, underexposed, flat lighting, bad perspective, cropped, out of frame, duplicate, error, disfigured, malformed limbs, extra limbs, cloned face';
+const QUALITY_ZH = '杰作级别，最高画质，超精细细节，电影级专业打光，专业调色，8K超高清分辨率，获奖级构图，写实风格渲染，体积光雾气氛围感';
+const QUALITY_EN = 'masterpiece, best quality, ultra-detailed, cinematic professional lighting, professional color grading, 8K ultra-high resolution, award-winning composition, photorealistic rendering, volumetric atmospheric fog';
+
+/* ═══════ STATE ═══════ */
+let S = {genre:null, vibe:null, cam:null, col:null, ratio:null};
+
+/* ═══════ BUILD UI ═══════ */
+function buildGenres() {
+  const w = document.getElementById('genre-grid');
+  GENRES.forEach((g,i) => {
+    const d = document.createElement('div');
+    d.className = 'g-item';
+    d.innerHTML = `<span class="g-icon">${g.ico}</span><span class="g-name">${g.zh}</span>`;
+    d.onclick = () => { S.genre = S.genre===g.id?null:g.id; w.querySelectorAll('.g-item').forEach((c,j)=>c.classList.toggle('on',j===i&&S.genre!==null)); updateProgress(); };
+    w.appendChild(d);
+  });
+}
+
+function buildVibes() {
+  const w = document.getElementById('vibe-grid');
+  VIBES.forEach((v,i) => {
+    const d = document.createElement('div');
+    d.className = 'v-item';
+    d.innerHTML = `<div class="v-idx">0${i+1}</div><div class="v-name">${v.zh}</div><div class="v-desc">${v.desc}</div><div class="v-feel">"${v.feel}"</div>`;
+    d.onclick = () => { S.vibe = S.vibe===v.id?null:v.id; w.querySelectorAll('.v-item').forEach((c,j)=>c.classList.toggle('on',j===i&&S.vibe!==null)); updateProgress(); };
+    w.appendChild(d);
+  });
+}
+
+function buildChips(data, id, key, tipFn) {
+  const w = document.getElementById(id);
+  data.forEach((item,i) => {
+    const d = document.createElement('div');
+    d.className = 'chip';
+    d.innerHTML = item.zh + (tipFn&&item.tip?`<span style="font-size:10px;opacity:.6;margin-left:4px">· ${item.tip}</span>`:'');
+    d.onclick = () => { S[key] = S[key]===item.zh?null:item.zh; w.querySelectorAll('.chip').forEach((c,j)=>c.classList.toggle('on',j===i&&S[key]!==null)); updateProgress(); };
+    w.appendChild(d);
+  });
+}
+
+function gv(id) { return document.getElementById(id).value; }
+function gt(id) { const e=document.getElementById(id); return e.options[e.selectedIndex].text; }
+
+function updateProgress() {
+  const has = [S.genre, S.vibe, (gv('sg')||gv('sc')||gv('se')||S.cam||S.col), document.getElementById('freetext').value.trim()];
+  [1,2,3,4].forEach(n => { if(has[n-1]) document.getElementById('ps'+n).classList.add('done'); });
+}
+
+/* ═══════ GENERATE ═══════ */
+function generate() {
+  const zhP=[], enP=[], breakdown=[], tags=[];
+  const g = GENRES.find(x=>x.id===S.genre);
+  const v = VIBES.find(x=>x.id===S.vibe);
+  const cam = CAMERAS.find(x=>x.zh===S.cam);
+  const col = COLORS.find(x=>x.zh===S.col);
+  const ratio = RATIOS.find(x=>x.zh===S.ratio);
+  const gender=gv('sg'), char=gv('sc'), env=gv('se'), time=gv('st');
+
+  if(g) {
+    zhP.push(g.zh+'风格，'+g.zh_art);
+    enP.push(g.en_art);
+    breakdown.push({k:'类型画风', v:`${g.zh} · ${g.zh_art}`});
+    tags.push({t:g.zh, c:'rt-blue'});
+  }
+  if(GENDER_ZH[gender]) { zhP.push(GENDER_ZH[gender]); enP.push(GENDER_EN[gender]); breakdown.push({k:'主角性别', v:gt('sg')}); }
+  if(CHAR_ZH[char]) { zhP.push(CHAR_ZH[char]); enP.push(CHAR_EN[char]); breakdown.push({k:'角色气质', v:gt('sc')}); tags.push({t:gt('sc'), c:'rt-gray'}); }
+  if(ENV_ZH[env]) { zhP.push(ENV_ZH[env]); enP.push(ENV_EN[env]); breakdown.push({k:'故事场景', v:gt('se')}); }
+  if(TIME_ZH[time]) { zhP.push(TIME_ZH[time]); enP.push(TIME_EN[time]); breakdown.push({k:'时间天气', v:gt('st')}); }
+  if(v) {
+    zhP.push(v.zh_p);
+    enP.push(v.en);
+    breakdown.push({k:'情绪氛围', v:`${v.zh} · ${v.desc}`});
+    tags.push({t:v.zh, c:'rt-blue'});
+  }
+  if(g) { zhP.push(g.zh_col); enP.push(g.en_col); breakdown.push({k:'色调基调', v:g.zh_col}); }
+  if(col) { zhP.push(col.zh+'色调'); enP.push(col.en); breakdown.push({k:'附加色调', v:col.zh}); tags.push({t:col.zh, c:'rt-gray'}); }
+  if(cam) {
+    zhP.push(cam.zh);
+    enP.push(cam.en);
+    breakdown.push({k:'镜头语言', v:`${cam.zh}（${cam.tip}）· 专业说法：${cam.en}`});
+    tags.push({t:cam.zh, c:'rt-green'});
+  }
+  if(ratio) { enP.push(ratio.en); breakdown.push({k:'画面比例', v:`${ratio.zh} · MJ参数 ${ratio.en}`}); }
+  zhP.push(QUALITY_ZH); enP.push(QUALITY_EN);
+  tags.push({t:'8K 电影级', c:'rt-blue'},{t:'专业打光', c:'rt-green'},{t:'获奖构图', c:'rt-gray'});
+
+  const zhText = zhP.filter(Boolean).join('，');
+  const enText = enP.filter(Boolean).join(', ');
+
+  if(!zhText || zhText.length < 5) { toast('请至少选择一个类型或情绪感觉'); return; }
+
+  document.getElementById('zh-prompt-out').textContent = zhText;
+  document.getElementById('en-prompt-out').textContent = enText;
+  document.getElementById('breakdown-out').innerHTML = breakdown.map(b=>`<div class="zh-row"><span class="zh-key">${b.k}</span><span class="zh-val">${b.v}</span></div>`).join('');
+  document.getElementById('neg-out').textContent = NEG;
+  const noteHTML = v&&DIRECTOR_NOTES[v.id]
+    ? `<p style="margin-bottom:14px">${DIRECTOR_NOTES[v.id]}</p>
+       <div class="note-tip"><span class="tip-icon">🎬</span><div class="tip-text"><strong>导演提示</strong>以上建议来自真实的影视摄影构图经验，不只适用于 AI 绘图，也是理解电影语言的入门知识。多练习、多看电影，你会越来越有感觉。</div></div>`
+    : '<p style="color:#aeaeb2;font-size:13px">请选择一种情绪感觉，系统会自动生成对应的导演笔记。</p>';
+  document.getElementById('note-out').innerHTML = noteHTML;
+  document.getElementById('tags-out').innerHTML = tags.map(t=>`<span class="rtag ${t.c}">${t.t}</span>`).join('');
+
+  const rs = document.getElementById('result-sec');
+  rs.style.display = 'block';
+  document.getElementById('ps5').classList.add('done');
+  setTimeout(()=>rs.scrollIntoView({behavior:'smooth',block:'start'}), 80);
+}
+
+/* ═══════ COPY / EXPORT ═══════ */
+function copyZH() {
+  const t = document.getElementById('zh-prompt-out').textContent;
+  if(!t){toast('请先点击"生成专业提示词"');return;}
+  navigator.clipboard.writeText(t).then(()=>{
+    toast('✓ 中文提示词已复制');
+    const b=document.getElementById('btn-cpzh');b.textContent='已复制 ✓';
+    setTimeout(()=>{b.textContent='复制中文提示词'},2000);
+  });
+}
+function copyEN() {
+  const t = document.getElementById('en-prompt-out').textContent;
+  if(!t){toast('请先点击"生成专业提示词"');return;}
+  navigator.clipboard.writeText(t).then(()=>{
+    toast('✓ 英文提示词已复制，粘贴到 AI 工具生成精准画面');
+    const b=document.getElementById('btn-cpen');b.textContent='已复制 ✓';
+    setTimeout(()=>{b.textContent='复制英文提示词'},2500);
+  });
+}
+function copyNeg() {
+  navigator.clipboard.writeText(NEG).then(()=>toast('✓ 负向提示词已复制'));
+}
+function copyLink() {
+  navigator.clipboard.writeText(SHARE).then(()=>toast('✓ 工具链接已复制'));
+}
+function copyShareMsg() {
+  const msg = `🎬 推荐一个超好用的 AI 漫剧提示词工具！\n\n「杉泽 AI 提示库 V2.0」\n选感觉，出大片 — 零基础就能生成电影级画面\n\n✦ 30年导演经验提炼\n✦ 中英文双语提示词\n✦ 支持 Midjourney / SD / Runway / 即梦 / 可灵\n\n👉 ${SHARE}`;
+  navigator.clipboard.writeText(msg).then(()=>toast('✓ 分享语已复制，发给朋友吧'));
+}
+function exportTxt() {
+  const zh = document.getElementById('zh-prompt-out').textContent;
+  const en = document.getElementById('en-prompt-out').textContent;
+  if(!zh){toast('请先点击"生成专业提示词"');return;}
+  const now = new Date().toLocaleString('zh-CN');
+  const neg = NEG;
+  const note = document.getElementById('note-out').innerText;
+  const content = [
+    '╔══════════════════════════════════════════╗',
+    '║       杉泽 AI 提示库 V2.0 · 导出记录      ║',
+    '╚══════════════════════════════════════════╝',
+    '',`生成时间：${now}`,`工具地址：${SHARE}`,
+    '','─'.repeat(50),
+    '',
+    '【中文提示词】（可直接用于支持中文的 AI 平台）',
+    zh,'',
+    '【英文提示词 · Positive Prompt】',
+    '⚡ 建议优先使用英文提示词，生成效果更精准',
+    en,'',
+    '【负向提示词 · Negative Prompt】',
+    '（粘贴到 Negative Prompt 栏，告诉 AI 不要画什么）',
+    neg,'',
+    '【导演笔记】',
+    note,'',
+    '─'.repeat(50),
+    '© 杉泽 AI 提示库 V2.0 · MIT License',
+    SHARE,
+  ].join('\n');
+  const blob = new Blob([content],{type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `杉泽提示词_${Date.now()}.txt`;
+  a.click();
+  toast('✓ 已导出完整 .txt 文件');
+}
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2800);
+}
+
+/* ═══════ INIT ═══════ */
+buildGenres();
+buildVibes();
+buildChips(CAMERAS,'cam-chips','cam',true);
+buildChips(COLORS,'col-chips','col',false);
+buildChips(RATIOS,'ratio-chips','ratio',true);
+['sg','sc','se','st'].forEach(id=>document.getElementById(id).addEventListener('change',updateProgress));
+document.getElementById('freetext').addEventListener('input',updateProgress);
+</script>
+</body>
+</html>
+HTMLEOF
